@@ -1,0 +1,15 @@
+services:
+  db:                               # nombre del servicio (y del host dentro de Docker)
+    image: postgres:17              
+    environment:                    
+      POSTGRES_USER: tfg            #   usuario
+      POSTGRES_PASSWORD: tfg        #   contraseña
+      POSTGRES_DB: tfg              #   base de datos
+    ports:
+      - "5432:5432"                 # puerto de tu máquina : puerto del contenedor
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # guarda los datos fuera del contenedor
+
+volumes:
+  pgdata:                           # volumen con nombre: los datos sobreviven
+                                    # aunque se pare o se borre el contenedor
