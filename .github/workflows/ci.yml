@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  node:
+    name: web + api
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r --if-present run lint     # Oxlint en web y api
+      - run: pnpm -r --if-present run build
+      - run: pnpm -r --if-present run test     # Vitest
+
+  analysis:
+    name: analysis (Python)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: analysis
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt ruff
+      - run: ruff check .                      # linter de Python
+      # Activar cuando existan pruebas (pytest falla si no encuentra ninguna):
+      # - run: python -m spacy download es_core_news_md
+      # - run: pip install pytest && pytest
