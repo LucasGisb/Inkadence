@@ -2,3 +2,5 @@ packages:
   - web
   - api
   - shared
+allowBuilds:
+  esbuild: true
